@@ -22,4 +22,19 @@
   </nav>
   <p>Для работы в Telegram WebApp uid будет передан автоматически.</p>
 {% endblock %}
-<p>UID: {{ uid }}</p>
+
+<script>
+  window.Telegram.WebApp.ready();
+  const initData = window.Telegram.WebApp.initDataUnsafe;
+  const uid = initData?.user?.id;
+
+  if (uid) {
+    const current = new URL(window.location.href);
+    if (!current.searchParams.has("uid")) {
+      current.searchParams.set("uid", uid);
+      window.location.replace(current.toString());
+    }
+  } else {
+    console.warn("UID not available from Telegram WebApp");
+  }
+</script>
