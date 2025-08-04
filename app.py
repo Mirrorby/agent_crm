@@ -55,8 +55,8 @@ def new_order():
     """Страница создания нового заказа."""
     uid = request.args.get("uid")
     role = get_role(uid) if uid else None
-    if role not in {"manager", "admin"}:
-        return abort(403)
+  #  if role not in {"manager", "admin"}:
+   #     return abort(403)
     if request.method == "POST":
         # Получаем общие данные заказа
         order_data = {
