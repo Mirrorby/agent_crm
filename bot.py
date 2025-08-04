@@ -19,7 +19,7 @@ WEBAPP_URL = os.getenv("WEBAPP_URL", "http://localhost:5000")
 
 # Роли пользователей – такие же, как в app.py
 ROLE_MAP: Dict[str, str] = {
-    # "123456789": "admin",
+     "379185153": "admin",
     # "234567890": "manager",
     # "345678901": "picker",
     # "456789012": "courier",
