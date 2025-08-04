@@ -1,40 +1,102 @@
-{% extends "base.html" %}
-
-{% block title %}Главная{% endblock %}
-
-{% block content %}
-  <h2>Главная</h2>
-  {% if role %}
-    <p>Ваша роль: <strong>{{ role }}</strong></p>
-  {% else %}
-    <p>Не удалось определить роль пользователя. Некоторые действия могут быть недоступны.</p>
-  {% endif %}
-  <nav>
-    {% if role in ["manager", "admin"] %}
-      <a class="btn" href="{{ url_for('new_order', uid=uid) }}">Новый заказ</a>
-    {% endif %}
-    <a class="btn" href="{{ url_for('orders', status='all', uid=uid) }}">Все заказы</a>
-    <a class="btn" href="{{ url_for('orders', status='оформлен', uid=uid) }}">Оформленные</a>
-    <a class="btn" href="{{ url_for('orders', status='ожидает поставки', uid=uid) }}">Ожидают поставки</a>
-    <a class="btn" href="{{ url_for('orders', status='сборка', uid=uid) }}">Сборка</a>
-    <a class="btn" href="{{ url_for('orders', status='доставка', uid=uid) }}">Доставка</a>
-    <a class="btn" href="{{ url_for('orders', status='завершён', uid=uid) }}">Завершённые</a>
-  </nav>
-  <p>Для работы в Telegram WebApp uid будет передан автоматически.</p>
-{% endblock %}
-
-<script>
-  window.Telegram.WebApp.ready();
-  const initData = window.Telegram.WebApp.initDataUnsafe;
-  const uid = initData?.user?.id;
-
-  if (uid) {
-    const current = new URL(window.location.href);
-    if (!current.searchParams.has("uid")) {
-      current.searchParams.set("uid", uid);
-      window.location.replace(current.toString());
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мини-CRM</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
     }
-  } else {
-    console.warn("UID not available from Telegram WebApp");
-  }
-</script>
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .header {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .section {
+      padding: 1rem 0;
+    }
+    .section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .btn {
+      flex: 1 1 45%;
+      padding: 0.7rem;
+      background: #003366;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Мини-CRM</h1>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <h2>Главная</h2>
+      {% if not role %}
+        <p>Не удалось определить роль пользователя. Некоторые действия могут быть недоступны.</p>
+      {% endif %}
+
+      <div class="btn-group">
+        <a class="btn" href="/orders/all?uid={{ uid }}">Все заказы</a>
+        <a class="btn" href="/orders/оформлен?uid={{ uid }}">Оформленные</a>
+        <a class="btn" href="/orders/ожидает поставки?uid={{ uid }}">Ожидают поставки</a>
+        <a class="btn" href="/orders/сборка?uid={{ uid }}">Сборка</a>
+        <a class="btn" href="/orders/доставка?uid={{ uid }}">Доставка</a>
+        <a class="btn" href="/orders/завершён?uid={{ uid }}">Завершённые</a>
+        {% if role in ["manager", "admin"] %}
+          <a class="btn" href="/new_order?uid={{ uid }}">➕ Новый заказ</a>
+        {% endif %}
+      </div>
+
+      <p class="info">Для работы в Telegram WebApp uid будет передан автоматически.</p>
+    </div>
+  </div>
+
+  <script>
+    window.Telegram.WebApp.ready();
+    const initData = window.Telegram.WebApp.initDataUnsafe;
+    const uid = initData?.user?.id;
+
+    if (uid) {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.has("uid")) {
+        url.searchParams.set("uid", uid);
+        window.location.replace(url.toString());
+      }
+    } else {
+      console.warn("UID не получен из Telegram WebApp");
+    }
+  </script>
+</body>
+</html>
