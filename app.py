@@ -30,7 +30,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-key")
 # В реальном проекте эти данные лучше хранить в базе или таблице
 ROLE_MAP: Dict[str, str] = {
     # пример:
-    # "123456789": "admin",
+    # "379185153": "admin",
     # "234567890": "manager",
     # "345678901": "picker",
     # "456789012": "courier",
