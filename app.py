@@ -30,7 +30,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-key")
 # В реальном проекте эти данные лучше хранить в базе или таблице
 ROLE_MAP: Dict[str, str] = {
     # пример:
-    # "379185153": "admin",
+     "379185153": "admin",
     # "234567890": "manager",
     # "345678901": "picker",
     # "456789012": "courier",
@@ -55,8 +55,8 @@ def new_order():
     """Страница создания нового заказа."""
     uid = request.args.get("uid")
     role = get_role(uid) if uid else None
-  #  if role not in {"manager", "admin"}:
-   #     return abort(403)
+    if role not in {"manager", "admin"}:
+        return abort(403)
     if request.method == "POST":
         # Получаем общие данные заказа
         order_data = {
