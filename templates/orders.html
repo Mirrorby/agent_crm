@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Заказы – {{ status }}{% endblock %}
+
+{% block content %}
+  <h2>Заказы – {{ status }}</h2>
+  <a class="btn" href="{{ url_for('index', uid=uid) }}">Назад</a>
+  {% if orders %}
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Статус</th>
+        <th>Дата</th>
+        <th>Клиент</th>
+        <th>Позиций</th>
+        <th>Действия</th>
+      </tr>
+      {% for order in orders %}
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.status }}</td>
+          <td>{{ order.date }}</td>
+          <td>{{ order.customer_name }}</td>
+          <td>{{ order.items|length }}</td>
+          <td>
+            {% if role in ["picker", "courier", "admin"] %}
+              {# Определяем следующую возможную стадию для смены статуса #}
+              {% set next_status = None %}
+              {% if role == "picker" %}
+                {% if order.status == "оформлен" %}
+                  {% set next_status = "ожидает поставки" %}
+                {% elif order.status == "ожидает поставки" %}
+                  {% set next_status = "сборка" %}
+                {% endif %}
+              {% elif role == "courier" %}
+                {% if order.status == "сборка" %}
+                  {% set next_status = "доставка" %}
+                {% elif order.status == "доставка" %}
+                  {% set next_status = "завершён" %}
+                {% endif %}
+              {% elif role == "admin" %}
+                {% set next_status = "завершён" %}
+              {% endif %}
+              {% if next_status %}
+                <a class="btn" href="{{ url_for('set_status', order_id=order.id, new_status=next_status, uid=uid) }}">→ {{ next_status }}</a>
+              {% else %}
+                —
+              {% endif %}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Нет заказов.</p>
+  {% endif %}
+{% endblock %}

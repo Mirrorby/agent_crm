@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+  <h2>Главная</h2>
+  {% if role %}
+    <p>Ваша роль: <strong>{{ role }}</strong></p>
+  {% else %}
+    <p>Не удалось определить роль пользователя. Некоторые действия могут быть недоступны.</p>
+  {% endif %}
+  <nav>
+    {% if role in ["manager", "admin"] %}
+      <a class="btn" href="{{ url_for('new_order', uid=uid) }}">Новый заказ</a>
+    {% endif %}
+    <a class="btn" href="{{ url_for('orders', status='all', uid=uid) }}">Все заказы</a>
+    <a class="btn" href="{{ url_for('orders', status='оформлен', uid=uid) }}">Оформленные</a>
+    <a class="btn" href="{{ url_for('orders', status='ожидает поставки', uid=uid) }}">Ожидают поставки</a>
+    <a class="btn" href="{{ url_for('orders', status='сборка', uid=uid) }}">Сборка</a>
+    <a class="btn" href="{{ url_for('orders', status='доставка', uid=uid) }}">Доставка</a>
+    <a class="btn" href="{{ url_for('orders', status='завершён', uid=uid) }}">Завершённые</a>
+  </nav>
+  <p>Для работы в Telegram WebApp uid будет передан автоматически.</p>
+{% endblock %}

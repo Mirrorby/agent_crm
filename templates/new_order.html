@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Новый заказ{% endblock %}
+
+{% block extra_head %}
+  <script>
+    // Скрипт для динамического добавления позиций
+    let itemCount = 0;
+    function addItem() {
+      const container = document.getElementById('items');
+      const index = itemCount++;
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'item-block';
+      itemDiv.innerHTML = `
+        <div class="form-row">
+          <div>
+            <label>Артикул</label>
+            <input type="text" name="item_${index}_sku" required />
+          </div>
+          <div>
+            <label>Поставщик</label>
+            <select name="item_${index}_supplier">
+              {% for supplier in suppliers %}
+                <option value="{{ supplier }}">{{ supplier }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Фото (URL)</label>
+            <input type="text" name="item_${index}_photo" placeholder="Ссылка на фото" />
+          </div>
+          <div>
+            <label>Количество</label>
+            <input type="number" name="item_${index}_quantity" min="1" value="1" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Сумма заказа</label>
+            <input type="number" step="0.01" name="item_${index}_order_sum" required />
+          </div>
+          <div>
+            <label>Сумма закупа</label>
+            <input type="number" step="0.01" name="item_${index}_purchase_sum" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div style="flex:1">
+            <label>Комментарий</label>
+            <textarea name="item_${index}_comment" rows="2"></textarea>
+          </div>
+        </div>
+        <hr />
+      `;
+      container.appendChild(itemDiv);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      addItem();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h2>Новый заказ</h2>
+  <form method="post" action="{{ url_for('new_order', uid=uid) }}">
+    <div class="form-row">
+      <div>
+        <label>Канал продаж</label>
+        <select name="channel" required>
+          {% for c in channels %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Логистика</label>
+        <select name="logistics" required>
+          {% for l in logistics %}
+            <option value="{{ l }}">{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>ФИО</label>
+        <input type="text" name="customer_name" required />
+      </div>
+      <div>
+        <label>Телефон</label>
+        <input type="text" name="phone" required />
+      </div>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Мессенджер</label>
+        <input type="text" name="messenger" />
+      </div>
+      <div>
+        <label>Адрес доставки</label>
+        <input type="text" name="address" required />
+      </div>
+    </div>
+    <hr />
+    <h3>Товары</h3>
+    <div id="items" class="items-container"></div>
+    <button type="button" class="btn" onclick="addItem()">Добавить товар</button>
+    <br />
+    <button type="submit" class="btn">Сохранить заказ</button>
+  </form>
+{% endblock %}
